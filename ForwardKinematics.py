@@ -1,18 +1,15 @@
 import numpy as np
 from spatialmath import SE3
-from roboticstoolbox import DHRobot, RevoluteDH, PrismaticDH
+from roboticstoolbox import DHRobot, RevoluteDH
 
-# 1) Define your DH parameters in one place.
-#    Use RevoluteDH for θ­-joints and PrismaticDH for d­-joints.
-#    Any fixed offset (like your "home" θ) goes in `offset=…`.
 
-links = [
-    RevoluteDH(alpha=np.pi/2,  a= 27.5, d=339,  offset=np.pi    ),  # joint 1
-    RevoluteDH(alpha=0,        a=250 , d=  0,  offset=np.pi/2  ),  # joint 2
-    RevoluteDH(alpha=np.pi/2,  a=-70 , d=  0,  offset=np.pi    ),  # joint 3
-    RevoluteDH(alpha=np.pi/2,  a=  0 , d=250,  offset=0         ),  # joint 4
-    RevoluteDH(alpha=np.pi/2,  a=  0 , d=  0,  offset=0         ),  # joint 5
-    RevoluteDH(alpha=0,        a=  0 , d= 95,  offset=np.pi    ),  # joint 6
+links = [ # in millimeters and radians
+    RevoluteDH(alpha=-np.pi/2, a=-27.5,d=339,  offset=np.pi    ),  # link 1
+    RevoluteDH(alpha=0,        a=250 , d=  0,  offset=-np.pi/2 ),  # link 2
+    RevoluteDH(alpha=-np.pi/2, a=-70 , d=  0,  offset=np.pi    ),  # link 3
+    RevoluteDH(alpha=np.pi/2,  a=  0 , d=250,  offset=0        ),  # link 4
+    RevoluteDH(alpha=-np.pi/2, a=  0 , d=  0,  offset=0        ),  # link 5
+    RevoluteDH(alpha=0,        a=  0 , d= 95,  offset=np.pi    ),  # link 6
 ]
 
 robot = DHRobot(links, name="miniBOT6-R")
@@ -49,11 +46,13 @@ def extract_pose(T: SE3):
 # --- example usage ---
 if __name__ == "__main__":
     # Suppose we want the home configuration:
-    thetas = [0, np.pi/2, 0, 0, -np.pi/2, 0]  # override any offsets as needed
-    T_ee = forward_kinematics(thetas)
-    pos, euler_zyx = extract_pose(T_ee)
+    # thetas = [0, np.pi/2, 0, 0, -np.pi/2, 0]  # override any offsets as needed
+    # T_ee = forward_kinematics(thetas)
+    # pos, euler_zyx = extract_pose(T_ee)
 
-    print("End‑effector pose:")
-    print(T_ee)                  # pretty‑printed 4×4 matrix
-    print("Position:", pos)      # 3‑vector
-    print("Euler ZYX:", euler_zyx)  # roll, pitch, yaw
+    # print("End‑effector pose:")
+    # print(T_ee)                  # pretty‑printed 4×4 matrix
+    # print("Position:", pos)      # 3‑vector
+    # print("Euler ZYX:", euler_zyx)  # roll, pitch, yaw
+
+    robot.__str__()
