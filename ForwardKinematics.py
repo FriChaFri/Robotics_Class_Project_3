@@ -2,7 +2,6 @@ import numpy as np
 from spatialmath.base import tr2rpy
 from roboticstoolbox import DHRobot, RevoluteDH
 
-
 links = [ # in millimeters and radians
     RevoluteDH(alpha=np.pi/2,  a=27.5, d=339,  offset=0      ),  # link 1
     RevoluteDH(alpha=0,        a= 250, d=  0,  offset=np.pi/2),  # link 2
@@ -12,19 +11,9 @@ links = [ # in millimeters and radians
     RevoluteDH(alpha=0,        a=   0, d= 95,  offset=0      ),  # link 6
 ]
 
-
 robot = DHRobot(links, name="miniBOT6-R")
 
 if __name__ == "__main__":
-    # Suppose we want the home configuration:
-    # thetas = [0, np.pi/2, 0, 0, -np.pi/2, 0]  # override any offsets as needed
-    # T_ee = forward_kinematics(thetas)
-    # pos, euler_zyx = extract_pose(T_ee)
-
-    # print("End‑effector pose:")
-    # print(T_ee)                  # pretty‑printed 4×4 matrix
-    # print("Position:", pos)      # 3‑vector
-    # print("Euler ZYX:", euler_zyx)  # roll, pitch, yaw
 
     robot.q = [0, np.pi/2, 0, 0, -np.pi/2, 0]
     print("Home Pose:")
@@ -33,10 +22,6 @@ if __name__ == "__main__":
     print("Q1 Pose:") # with Theta2 = 90 degrees and Theta5 = -90 degrees:
     q1_pose = robot.fkine(robot.q-robot.offset)
     print(q1_pose)
-    # print("Euler ZYX:")
-    # print(tr2rpy(q1_pose.A, 'zyx').round(5))  # roll, pitch, yaw
-    # print("Position:")
-    # print(q1_pose.t.round(5))
     print("Combined position and Euler ZYX for Q1 Pose:")
     print(np.concatenate((q1_pose.t.round(5), tr2rpy(q1_pose.A, 'zyx').round(5))))
 
