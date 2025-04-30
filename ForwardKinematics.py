@@ -25,3 +25,15 @@ if __name__ == "__main__":
     print("Combined position and Euler ZYX for Q1 Pose:")
     print(np.concatenate((q1_pose.t.round(5), tr2rpy(q1_pose.A, 'zyx').round(5))))
 
+    q_start = np.array([0, 0, 0, 0, 0, 0])
+    q_end   = np.array([np.pi/4, -np.pi/6, np.pi/3, 0, np.pi/2, -np.pi/4])
+
+    # (3) Build a time vector and linearly interpolate
+    steps = 100
+    t = np.linspace(0, 1, steps)              # normalized time
+    q = np.linspace(q_start, q_end, steps)    # shape (100,6)
+
+    from roboticstoolbox.backends.swift import Swift
+
+    robot.plot(q=q, block=True, loop=False, jointaxes=True, eeframe=True, shadow=True)
+# q=[[1,1,1,1,1,1], [1.1,1.1,1.1,1.1,1.1,1.1]]
