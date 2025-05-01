@@ -160,7 +160,7 @@ def find_theta2_theta3_pairs(robot, target_pose):
 
 # def find_theta4_theta5_theta6(robot, target_pose, theta1, theta2, theta3):
 
-def compare_inverse_kinematic_solutions(robot, target_pose, q0):
+def compare_inverse_kinematic_solutions(robot, target_pose, q0=None):
     """
     compare the closed form inverse kinematics solution with the numerical inverse kinematics solutions built into the robot class.
     """
@@ -260,33 +260,37 @@ if __name__ == "__main__":
     #TODO show robot on r-z plane
 
 
-    # given_pose = np.array([[.7551, .4013, .5184, 399.1255], 
-    #                        [.6084, -.7235, -.3262, 171.01526],
-    #                        [.2441, .5617, -.7905, 416.0308], 
-    #                        [0, 0, 0, 1]])
-    # target_pose = SE3(given_pose, check=False)
-    # print(target_pose)
-    # solutions = closed_form_inverse_kinematics(robot, target_pose)
-    # print(np.round(solutions,3))
+    given_pose = np.array([[.7551, .4013, .5184, 399.1255], 
+                           [.6084, -.7235, -.3262, 171.01526],
+                           [.2441, .5617, -.7905, 416.0308], 
+                           [0, 0, 0, 1]])
+    target_pose = SE3(given_pose, check=False)
+    print(target_pose)
+    solutions = closed_form_inverse_kinematics(robot, target_pose)
+    print(np.round(solutions,3))
 
+    solutions, errors = compare_inverse_kinematic_solutions(robot, target_pose)
+    for name, sol in solutions.items():
+        print(f"{name} solution: {sol.q.round(4) if sol.success else 'No solution found'} and {sol}")
 
-    # # number of IK tests per window
-    # n_tests = 100
-    # # fraction of π each window spans, e.g. 0.25 → π/4
-    # frac_step = 1/16
-    # # how many windows to run; e.g. 4 will cover [0,π] in π/4 slices
-    # num_steps = 32
+    ''' #CODE FOR TESTING
+    # number of IK tests per window
+    n_tests = 100
+    # fraction of π each window spans, e.g. 0.25 → π/4
+    frac_step = 1/16
+    # how many windows to run; e.g. 4 will cover [0,π] in π/4 slices
+    num_steps = 32
 
-    # for i in range(num_steps):
-    #     lo = i * frac_step * np.pi
-    #     hi = (i + 1) * frac_step * np.pi
-    #     print(f"\n=== Testing angle range [{lo:.2f}, {hi:.2f}] rad ===")
-    #     check_inverse_kinematics_solution(
-    #         robot,
-    #         n_tests,
-    #         angle_range=(lo, hi),
-    #         verbose=False
-    #     )
+    for i in range(num_steps):
+        lo = i * frac_step * np.pi
+        hi = (i + 1) * frac_step * np.pi
+        print(f"\n=== Testing angle range [{lo:.2f}, {hi:.2f}] rad ===")
+        check_inverse_kinematics_solution(
+            robot,
+            n_tests,
+            angle_range=(lo, hi),
+            verbose=False
+        )
 
         check_inverse_kinematics_solution(
         robot,
@@ -295,51 +299,5 @@ if __name__ == "__main__":
         verbose=True,
         tol=0.1
     )
+    '''
 
-        #     check_inverse_kinematics_solution(
-        #     robot,
-        #     1000,
-        #     angle_range=(np.pi/2-0.058, np.pi/2-0.057),
-        #     verbose=False
-        # )
-
-        #     check_inverse_kinematics_solution(
-        #     robot,
-        #     1000,
-        #     angle_range=(-.6604, -.66),
-        #     verbose=False
-        # )
-            
-        #     check_inverse_kinematics_solution(
-        #     robot,
-        #     1000,
-        #     angle_range=(np.pi/2-0.058, np.pi/2-0.056),
-        #     verbose=False
-        # )
-
-        #     check_inverse_kinematics_solution(
-        #     robot,
-        #     1000,
-        #     angle_range=(-.6605, -.66),
-        #     verbose=False
-        # )
-
-        #     check_inverse_kinematics_solution(
-        #     robot,
-        #     1000,
-        #     angle_range=(-.6605, np.pi/2-0.056),
-        #     verbose=False
-        # )
-
-        #     check_inverse_kinematics_solution(
-        #     robot,
-        #     1,
-        #     angle_range=(-.661, -.6605),
-        #     verbose=True
-        # )
-        #     check_inverse_kinematics_solution(
-        #     robot,
-        #     1,
-        #     angle_range=(np.pi/2-0.056, np.pi/2-0.055),
-        #     verbose=True
-        # )
