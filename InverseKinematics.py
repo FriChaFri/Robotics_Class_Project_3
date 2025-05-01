@@ -250,16 +250,18 @@ def find_theta4_theta5_theta6(robot, target_pose, theta1, theta2, theta3):
 
     return theta4, theta5, theta6
 
-
-    
-if __name__ == "__main__":
-    given_pose = np.array([[.7551, .4013, .5184, 399.1255], 
-                           [.6084, -.7235, -.3262, 171.01526],
-                           [.2441, .5617, -.7905, 416.0308], 
-                           [0, 0, 0, 1]])
+def get_q_given_pose(robot, verbose=False, given_pose = np.array([[.7551, .4013, .5184, 399.1255], 
+                                                    [.6084, -.7235, -.3262, 171.01526],
+                                                    [.2441, .5617, -.7905, 416.0308], 
+                                                    [0, 0, 0, 1]])):
+    ''' Get the q values given a pose.
+    Input: given_pose: 4x4 matrix of the pose. Default is the pose given in the question. 
+    Output: q: 6x1 matrix of the joint angles
+    '''
     target_pose = SE3(given_pose, check=False)
-    print("\nTarget pose:")
-    print(target_pose)
+    if verbose:
+        print("\nTarget pose:")
+        print(target_pose)
 
     # all 8 exact solutions
     all_solutions = closed_form_inverse_kinematics(robot, target_pose)
@@ -272,8 +274,9 @@ if __name__ == "__main__":
 
     all_solutions = all_solutions_new
 
-    print("All potential solutions:")
-    print(np.round(all_solutions,3))
+    if verbose:
+        print("All potential solutions:")
+        print(np.round(all_solutions,3))
 
 
     all_solutions_trimmed = []
@@ -286,18 +289,22 @@ if __name__ == "__main__":
 
     all_solutions = np.array(all_solutions_trimmed)
 
-
-    print("\nAll solutions that result in correct pose:")
-    print(np.round(all_solutions,3))
+    if verbose:
+        print("\n✅ All solutions that result in correct pose: ✅")
+        print(np.round(all_solutions,3))
 
     #numerical solutions 
-    print("\nNumerical solutions:")
+    if verbose: print("\nNumerical solutions:")
     numerical_solutions, errors = compare_inverse_kinematic_solutions(robot, target_pose)
     for name, sol in numerical_solutions.items():
         err = np.linalg.norm(robot.fkine(sol.q).A - given_pose)
-        print(f"{name} solution: {sol.q.round(4) if sol.success else 'No solution found'} {'✅ Confirmed Correct' if err < 0.1 else '❌ Confirmed Incorrect'}")
+        if verbose: print(f"{name} solution: {sol.q.round(4) if sol.success else 'No solution found'} {'✅ Confirmed Correct' if err < 0.1 else '❌ Confirmed Incorrect'}")
 
+    return all_solutions
+    
+if __name__ == "__main__":
 
+    get_q_given_pose(robot)
 
     ''' #CODE FOR TESTING
     # number of IK tests per window
