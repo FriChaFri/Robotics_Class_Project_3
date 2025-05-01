@@ -1,6 +1,6 @@
 from ForwardKinematics import robot
 import numpy as np
-from spatialmath import SE3
+from spatialmath import SE3, SO3
 
 def intersecting_circles(c1, r1, c2, r2):
     """
@@ -53,8 +53,6 @@ def xyz2rz(wrist_center_xyz):
     r = np.sqrt(x**2 + y**2)
     return np.array([r, z])
 
-
-
 def closed_form_inverse_kinematics(robot, target_pose):
     """
     Closed form inverse kinematics solution for the robot.
@@ -102,7 +100,6 @@ def find_theta1(robot, target_pose):
     theta1_b = np.pi + np.arctan2(yc, xc)
 
     return np.array([theta1_a, theta1_b])
-
 
 def find_theta2_theta3_pairs(robot, target_pose):
     """
@@ -157,8 +154,6 @@ def find_theta2_theta3_pairs(robot, target_pose):
                                      [theta2_b, theta3_d]
                                                            ])
     return theta2_theta3_pairs
-
-# def find_theta4_theta5_theta6(robot, target_pose, theta1, theta2, theta3):
 
 def compare_inverse_kinematic_solutions(robot, target_pose, q0=None):
     """
@@ -240,38 +235,69 @@ def check_inverse_kinematics_solution(robot, n,
     pct = 100 * total_correct / n
     print(f"Success rate: {pct:.1f}%\n")
 
+def find_theta4_theta5_theta6(robot, target_pose, theta1, theta2, theta3):
+    q = [theta1, theta2, theta3, 0, 0, 0]
+    T_all = robot.fkine_all(q)
+    T03 = T_all[3]
+    R03 = T03.R
+
+    target_pose = SE3(target_pose)
+    target_R = target_pose.R
+    
+    R36 = R03.T @ target_R
+    R36 = SO3(R36, check=False)
+    theta4, theta5, theta6 = R36.eul(unit='rad')
+
+    return theta4, theta5, theta6
 
 
     
 if __name__ == "__main__":
-    # print("Target Pose:")
-    # target_pose = robot.fkine([.1,.1,.1,.1,.1,.1])
-    # print(target_pose)
-    # solutions, errors = compare_inverse_kinematic_solutions(robot, target_pose, q0=[0,0,0,0,0,0])
-
-    # for name, sol in solutions.items():
-    #     print(f"{name} solution: {sol.q.round(4) if sol.success else 'No solution found'} and {sol}")
-    # print("Errors:")
-    # for name, error in errors.items():
-    #     print(f"{name} error: {error.round(5) if error is not None else 'No solution found'}")
-
-    
-    #TODO define origin0,1,2,3,4,5,6 and everything else on a figure, including length 1, 2, and so on
-    #TODO show robot on r-z plane
-
-
     given_pose = np.array([[.7551, .4013, .5184, 399.1255], 
                            [.6084, -.7235, -.3262, 171.01526],
                            [.2441, .5617, -.7905, 416.0308], 
                            [0, 0, 0, 1]])
     target_pose = SE3(given_pose, check=False)
+    print("\nTarget pose:")
     print(target_pose)
-    solutions = closed_form_inverse_kinematics(robot, target_pose)
-    print(np.round(solutions,3))
 
-    solutions, errors = compare_inverse_kinematic_solutions(robot, target_pose)
-    for name, sol in solutions.items():
-        print(f"{name} solution: {sol.q.round(4) if sol.success else 'No solution found'} and {sol}")
+    # all 8 exact solutions
+    all_solutions = closed_form_inverse_kinematics(robot, target_pose)
+
+    all_solutions_new = np.zeros((8, 6))
+    # match each solution found so far with its theta4,5,6 counterparts
+    for i, sol in enumerate(all_solutions):
+        theta4, theta5, theta6 = find_theta4_theta5_theta6(robot, target_pose, *sol)
+        all_solutions_new[i, :] = np.hstack((sol, [theta4, theta5, theta6]))
+
+    all_solutions = all_solutions_new
+
+    print("All potential solutions:")
+    print(np.round(all_solutions,3))
+
+
+    all_solutions_trimmed = []
+    for sol in all_solutions:
+        # print(robot.fkine(sol).A - given_pose)
+        err = np.linalg.norm(robot.fkine(sol).A - given_pose)
+        if err < 0.1:
+            all_solutions_trimmed.append(sol)
+        # print(err < 0.1)   # should all be True
+
+    all_solutions = np.array(all_solutions_trimmed)
+
+
+    print("\nAll solutions that result in correct pose:")
+    print(np.round(all_solutions,3))
+
+    #numerical solutions 
+    print("\nNumerical solutions:")
+    numerical_solutions, errors = compare_inverse_kinematic_solutions(robot, target_pose)
+    for name, sol in numerical_solutions.items():
+        err = np.linalg.norm(robot.fkine(sol.q).A - given_pose)
+        print(f"{name} solution: {sol.q.round(4) if sol.success else 'No solution found'} {'✅ Confirmed Correct' if err < 0.1 else '❌ Confirmed Incorrect'}")
+
+
 
     ''' #CODE FOR TESTING
     # number of IK tests per window
