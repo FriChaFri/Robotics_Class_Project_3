@@ -4,7 +4,7 @@ from roboticstoolbox import DHRobot, RevoluteDH
 
 links = [ # in millimeters and radians
     RevoluteDH(alpha=np.pi/2,  a=27.5, d=339,  offset=0      ),  # link 1
-    RevoluteDH(alpha=0,        a= 250, d=  0,  offset=np.pi/2),  # link 2
+    RevoluteDH(alpha=0,        a= 250, d=  0,  offset=0),  # link 2 #FIXME the offset is not correct.
     RevoluteDH(alpha=np.pi/2,  a=  70, d=  0,  offset=0      ),  # link 3
     RevoluteDH(alpha=-np.pi/2, a=   0, d=250,  offset=0      ),  # link 4
     RevoluteDH(alpha=np.pi/2,  a=   0, d=  0,  offset=0      ),  # link 5
