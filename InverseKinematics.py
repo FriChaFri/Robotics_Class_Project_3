@@ -302,6 +302,12 @@ def get_q_given_pose(robot, verbose=False, given_pose = np.array([[.7551, .4013,
 
     return all_solutions
     
+def get_given_pose():
+    return SE3(np.array([[0.7551, 0.4013, 0.5184, 399.1255], 
+                    [0.6084, -0.7235, -0.3262, 171.01526],
+                    [0.2441, 0.5617, -0.7905, 416.0308], 
+                    [0.0, 0.0, 0.0, 1.0]]), check=False)
+
 if __name__ == "__main__":
 
     get_q_given_pose(robot)
