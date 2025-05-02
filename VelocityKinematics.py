@@ -14,7 +14,7 @@ for i, q in enumerate(all_q_options):
     J = robot.jacob0(q, T = given_pose) 
 
     # Third desired twist [vx,vy,vz,wx,wy,wz]ᵀ
-    v = np.array([10, -20, -30,   # linear velocity
+    v = np.array([100, -200, -300,   # linear velocity
                 2,  -1,   0.5]) # angular velocity
 
     # Fourth solve for qdot

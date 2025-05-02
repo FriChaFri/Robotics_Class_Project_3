@@ -246,7 +246,7 @@ def find_theta4_theta5_theta6(robot, target_pose, theta1, theta2, theta3):
     
     R36 = R03.T @ target_R
     R36 = SO3(R36, check=False)
-    theta4, theta5, theta6 = R36.eul(unit='rad')
+    theta4, theta5, theta6 = R36.eul(unit='rad') #ZYZ Euler angles
 
     return theta4, theta5, theta6
 
@@ -310,7 +310,7 @@ def get_given_pose():
 
 if __name__ == "__main__":
 
-    get_q_given_pose(robot)
+    get_q_given_pose(robot, verbose=True)
 
     ''' #CODE FOR TESTING
     # number of IK tests per window
