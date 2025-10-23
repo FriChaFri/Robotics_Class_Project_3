@@ -8,8 +8,6 @@ This project contains small, focused Python scripts for computing:
 - **Velocity Kinematics / Jacobians**
 - A documented **symbolic IK attempt** (for learning/reference)
 
-It’s designed to be easy to run from the command line for quick checks or homework write-ups, and simple to read for classmates or recruiters skimming your code.
-
 ---
 
 ## Repo layout
@@ -69,41 +67,6 @@ python VelocityKinematics.py
 ## Configuration
 
 Most scripts define **DH parameters**, **link lengths**, and **joint limits** at the top of the file. Edit those to match your mechanism. If your robot differs (e.g., planar vs. spatial, revolute vs. prismatic), mirror that in the DH table and the joint type flags.
-
----
-
-## Notes & tips
-
-- **Symbolic IK**: The `FailedAttempt_SymbolicInverseKinematics.py` file shows the algebraic direction explored (useful for reports and for understanding where closed-form gets sticky).
-- **Numeric stability**: If IK oscillates or fails to converge, try:
-  - Better initial guesses
-  - Slightly relaxed tolerances
-  - Damped least-squares (Levenberg-Marquardt style) parameters
-- **Units**: Be consistent—stick to meters and radians throughout.
-
----
-
-## Reproducing the report
-
-For context and grading criteria, see the assignment brief and the final write-up included in the repo:
-- `Project3-instructions.pdf`
-- `Final Report (charles friley).pdf`
-
----
-
-## FAQ
-
-**Q: I get import errors for `roboticstoolbox` or `spatialmath`.**  
-A: Double-check you’re inside the virtual environment and installed packages with the exact names shown above.
-
-**Q: Can I swap in a different robot?**  
-A: Yes—edit the DH parameters and joint limits in each script. FK/IK/Jacobian code is intentionally minimal to make that easy.
-
----
-
-## License
-
-If you need one, consider adding MIT here. (Currently, the repo has no license file.)
 
 ---
 
